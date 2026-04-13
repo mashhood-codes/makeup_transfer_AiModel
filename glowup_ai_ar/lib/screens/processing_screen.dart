@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../config/theme.dart';
 import '../models/makeup_style.dart';
 import '../services/api_service.dart';
@@ -6,12 +7,14 @@ import 'results_screen.dart';
 
 class ProcessingScreen extends StatefulWidget {
   final String imagePath;
-  final MakeupStyle style;
+  final MakeupStyle? style;
+  final String? customStylePath;
 
   const ProcessingScreen({
     Key? key,
     required this.imagePath,
-    required this.style,
+    this.style,
+    this.customStylePath,
   }) : super(key: key);
 
   @override
@@ -53,9 +56,12 @@ class _ProcessingScreenState extends State<ProcessingScreen>
         _progress = 0.3;
       });
 
+      // Support both preset and custom styles
+      final styleId = widget.style?.id ?? 'custom';
       final result = await _apiService.transferMakeup(
         imagePath: widget.imagePath,
-        styleId: widget.style.id,
+        styleId: styleId,
+        customStylePath: widget.customStylePath,
       );
 
       setState(() => _progress = 0.9);

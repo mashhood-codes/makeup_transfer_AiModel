@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:image_picker/image_picker.dart';
@@ -92,7 +93,7 @@ class _TransferScreenState extends State<TransferScreen> {
   Future<void> _logout() async {
     await SecureAuthService.logout();
     if (mounted) {
-      Navigator.of(context).pushReplacementNamed('/splash');
+      context.go('/splash');
     }
   }
 
@@ -448,7 +449,7 @@ class _TransferScreenState extends State<TransferScreen> {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(20),
             child: Image.network(
-              '${ ApiConfig.baseUrl}$_resultImageUrl',
+              _resultImageUrl!,
               fit: BoxFit.cover,
               loadingBuilder: (context, child, loading) {
                 if (loading == null) return child;

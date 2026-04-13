@@ -100,16 +100,22 @@ class GlowupAIApp extends ConsumerWidget {
           builder: (context, state) => const ParlourListingScreen(),
         ),
         GoRoute(
-          path: '/parlour-detail',
-          builder: (context, state) => const ParlourDetailScreen(),
+          path: '/parlour-detail/:id',
+          builder: (context, state) {
+            final parlourId = state.pathParameters['id'] ?? '';
+            return ParlourDetailScreen(parlourId: parlourId);
+          },
         ),
         GoRoute(
           path: '/search-filter',
           builder: (context, state) => const SearchFilterScreen(),
         ),
         GoRoute(
-          path: '/booking',
-          builder: (context, state) => const BookingScreen(),
+          path: '/booking/:parlourId',
+          builder: (context, state) {
+            final parlourId = state.pathParameters['parlourId'] ?? '';
+            return BookingScreen(parlourId: parlourId);
+          },
         ),
       ],
       redirect: (context, state) async {

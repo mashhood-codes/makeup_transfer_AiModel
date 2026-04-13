@@ -81,10 +81,13 @@ class MakeupAPI {
 
         // CRITICAL: Extract ONLY the filename, remove any path components
         if (resultFilename.isNotEmpty) {
-          // Remove any directory paths
+          // Handle Windows absolute paths (C:\path\to\file or C://path//to//file)
           resultFilename = resultFilename.replaceAll(RegExp(r'[\\\/]'), '/');
+          resultFilename = resultFilename.replaceAll(RegExp(r'^[A-Z]:'), ''); // Remove C: D: etc
+          resultFilename = resultFilename.replaceAll(RegExp(r'^/+'), ''); // Remove leading slashes
+
           final parts = resultFilename.split('/');
-          resultFilename = parts.last;  // Get only the last component (filename)
+          resultFilename = parts.where((p) => p.isNotEmpty).toList().last;
           print('   - Cleaned filename: "$resultFilename"');
         }
 

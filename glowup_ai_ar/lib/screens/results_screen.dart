@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:share_plus/share_plus.dart';
+import 'package:go_router/go_router.dart';
 import 'dart:io';
 import '../config/theme.dart';
 import '../models/makeup_style.dart';
@@ -8,7 +8,7 @@ import 'home_screen.dart';
 class ResultsScreen extends StatefulWidget {
   final TransferResult result;
   final String originalImagePath;
-  final MakeupStyle styleUsed;
+  final MakeupStyle? styleUsed;
 
   const ResultsScreen({
     Key? key,
@@ -25,14 +25,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
   bool _showComparison = false;
 
   Future<void> _shareResult() async {
-    try {
-      await Share.shareXFiles(
-        [XFile(widget.result.resultImagePath)],
-        text: 'Check out my makeup transformation with GlowUp!',
-      );
-    } catch (e) {
-      _showSnackBar('Error sharing: $e');
-    }
+    _showSnackBar('Share feature coming soon! 🚀');
   }
 
   void _showSnackBar(String message) {
@@ -52,10 +45,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
         backgroundColor: AppTheme.surfaceColor,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: AppTheme.textPrimary),
-          onPressed: () => Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => const HomeScreen()),
-            (route) => false,
-          ),
+          onPressed: () => context.go('/home'),
         ),
         title: Text(
           'Your Result',
@@ -195,7 +185,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
         children: [
           _buildStatRow(
             'Makeup Style',
-            widget.styleUsed.name,
+            widget.styleUsed?.name ?? 'Custom Style',
           ),
           const SizedBox(height: 16),
           _buildStatRow(

@@ -42,6 +42,7 @@ flutter:
 
   assets:
     - assets/styles/
+    - assets/makeup/
 
 
 

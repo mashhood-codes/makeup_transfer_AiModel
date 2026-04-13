@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:go_router/go_router.dart';
 import 'dart:io';
 import '../config/theme.dart';
 import '../models/makeup_style.dart';
 import '../services/api_service.dart';
 import 'processing_screen.dart';
+import 'parlour_listing.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -14,10 +16,12 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  int _selectedTab = 0; // 0 = Parlours, 1 = Makeup Transfer
   final ImagePicker _imagePicker = ImagePicker();
   final ApiService _apiService = ApiService();
 
   File? _selectedImage;
+  File? _customStyleImage;  // For custom makeup style uploads
   List<MakeupStyle> _styles = [];
   MakeupStyle? _selectedStyle;
   bool _isLoading = true;
@@ -68,13 +72,31 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  Future<void> _pickCustomStyle() async {
+    try {
+      final image = await _imagePicker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 100,
+      );
+      if (image != null) {
+        setState(() {
+          _customStyleImage = File(image.path);
+          _selectedStyle = null; // Clear preset style when custom is selected
+        });
+        _showSnackBar('Custom style loaded! ✨');
+      }
+    } catch (e) {
+      _showSnackBar('Error picking custom style: $e');
+    }
+  }
+
   void _startTransfer() {
     if (_selectedImage == null) {
       _showSnackBar('Please select an image first');
       return;
     }
-    if (_selectedStyle == null) {
-      _showSnackBar('Please select a makeup style');
+    if (_selectedStyle == null && _customStyleImage == null) {
+      _showSnackBar('Please select a makeup style or upload a custom one');
       return;
     }
 
@@ -83,7 +105,8 @@ class _HomeScreenState extends State<HomeScreen> {
       MaterialPageRoute(
         builder: (context) => ProcessingScreen(
           imagePath: _selectedImage!.path,
-          style: _selectedStyle!,
+          style: _selectedStyle,
+          customStylePath: _customStyleImage?.path,
         ),
       ),
     );
@@ -102,12 +125,36 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _isLoading
-          ? _buildLoadingState()
-          : _errorMessage != null
-              ? _buildErrorState()
-              : _buildMainContent(),
+      body: _selectedTab == 0
+          ? const ParlourListingScreen()  // Parlours Tab
+          : _isLoading
+              ? _buildLoadingState()
+              : _errorMessage != null
+                  ? _buildErrorState()
+                  : _buildMakeupTransferContent(),  // Makeup Transfer Tab
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedTab,
+        onTap: (index) {
+          setState(() {
+            _selectedTab = index;
+          });
+        },
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.storefront),
+            label: 'Parlours',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.auto_awesome),
+            label: 'Makeup Transfer',
+          ),
+        ],
+      ),
     );
+  }
+
+  Widget _buildMakeupTransferContent() {
+    return _buildMainContent();
   }
 
   Widget _buildLoadingState() {
@@ -367,8 +414,16 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  String _getStyleAssetPath(String styleId) {
+    // Map API style IDs to local asset images
+    final styleNum = styleId.replaceAll(RegExp(r'\D'), ''); // Extract numbers
+    final defaultNum = styleNum.isNotEmpty ? styleNum : '1';
+    return 'assets/makeup/make_styles_$defaultNum.jpg';
+  }
+
   Widget _buildStyleCard(MakeupStyle style) {
     final isSelected = _selectedStyle?.id == style.id;
+    final assetPath = _getStyleAssetPath(style.id);
     return GestureDetector(
       onTap: () => setState(() => _selectedStyle = style),
       child: Container(
@@ -393,13 +448,21 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(14),
-              child: Container(
-                color: AppTheme.borderColorLight,
-                child: const Icon(
-                  Icons.image,
-                  size: 40,
-                  color: Color(0xFFD1D5DB),
-                ),
+              child: Image.asset(
+                assetPath,
+                width: double.infinity,
+                height: double.infinity,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    color: AppTheme.borderColorLight,
+                    child: const Icon(
+                      Icons.image_not_supported,
+                      size: 40,
+                      color: Color(0xFFD1D5DB),
+                    ),
+                  );
+                },
               ),
             ),
             Positioned(
@@ -456,31 +519,37 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildUploadStyleCard() {
+    final hasCustomStyle = _customStyleImage != null;
     return GestureDetector(
       onTap: () {
-        _showSnackBar('Upload custom style feature coming soon');
+        if (hasCustomStyle) {
+          setState(() => _customStyleImage = null);
+          _showSnackBar('Custom style removed');
+        } else {
+          _pickCustomStyle();
+        }
       },
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: AppTheme.borderColor,
-            width: 2,
+            color: hasCustomStyle ? AppTheme.primaryColor : AppTheme.borderColor,
+            width: hasCustomStyle ? 2 : 2,
             style: BorderStyle.solid,
           ),
-          color: AppTheme.borderColorLight,
+          color: hasCustomStyle ? AppTheme.primaryColor.withValues(alpha: 0.1) : AppTheme.borderColorLight,
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              Icons.add_a_photo,
+              hasCustomStyle ? Icons.check_circle : Icons.add_a_photo,
               size: 40,
-              color: AppTheme.primaryColor.withOpacity(0.5),
+              color: hasCustomStyle ? AppTheme.primaryColor : AppTheme.primaryColor.withOpacity(0.5),
             ),
             const SizedBox(height: 8),
             Text(
-              'Upload Custom',
+              hasCustomStyle ? 'Custom Style ✓' : 'Upload Custom',
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     color: AppTheme.primaryColor,
                   ),
