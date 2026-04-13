@@ -1,0 +1,15 @@
+# Flutter
+global_parlour_app/
+glowup_ai_ar/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+venv/
+
+# Misc
+.DS_Store
+*.md
