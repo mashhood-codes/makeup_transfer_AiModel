@@ -1,0 +1,46 @@
+# Build artifacts
+build/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+pubspec.lock
+
+# Android
+android/build/
+android/.gradle/
+android/.idea/
+android/local.properties
+android/gradlew
+android/gradlew.bat
+*.jks
+*.keystore
+
+# iOS
+ios/Pods/
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+
+# Misc
+.DS_Store
+*.log
+*.swp
+*.swo
+*~
+.env
+.env.local
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.sublime-workspace
+*.sublime-project
+
+# OS
+Thumbs.db
+.directory
+
+# Docker
+docker_volumes/
+.docker/

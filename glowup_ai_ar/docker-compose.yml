@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  flutter_dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: flutter_build
+    container_name: glowup_flutter_dev
+    volumes:
+      - .:/app
+      - flutter_pub_cache:/root/.pub-cache
+      - gradle_cache:/root/.gradle
+      - android_sdk:/opt/android-sdk
+    environment:
+      - FLUTTER_HOME=/opt/flutter
+      - JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+      - ANDROID_HOME=/opt/android-sdk
+    working_dir: /app
+    stdin_open: true
+    tty: true
+    command: /bin/bash
+
+volumes:
+  flutter_pub_cache:
+    driver: local
+  gradle_cache:
+    driver: local
+  android_sdk:
+    driver: local
