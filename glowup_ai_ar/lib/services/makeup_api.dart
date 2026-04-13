@@ -110,15 +110,5 @@ class MakeupAPI {
 }
 
 
-        return fullUrl;
-      }
-      throw Exception('Transfer failed: ${res.statusCode}');
-    } catch (e) {
-      print('❌ Error: $e');
-      rethrow;
-    }
-  }
-}
-
 
 

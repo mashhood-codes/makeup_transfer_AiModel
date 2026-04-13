@@ -39,7 +39,7 @@ class GlowupAIApp extends ConsumerWidget {
         useMaterial3: true,
         fontFamily: 'Poppins',
         primaryColor: AppColors.primary,
-        scaffoldBackgroundColor: AppColors.background,
+        scaffoldBackgroundColor: AppColors.backgroundLight,
         appBarTheme: const AppBarTheme(
           backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
@@ -111,11 +111,11 @@ class GlowupAIApp extends ConsumerWidget {
       ],
       redirect: (context, state) async {
         final isLoggedIn = await SecureAuthService.isLoggedIn();
-        final isSplash = state.subloc == '/splash';
-        final isAuthRoute = state.subloc == '/login' ||
-            state.subloc == '/signup' ||
-            state.subloc == '/forgot-password';
-        final isOnboarding = state.subloc == '/onboarding';
+        final isSplash = state.uri.path == '/splash';
+        final isAuthRoute = state.uri.path == '/login' ||
+            state.uri.path == '/signup' ||
+            state.uri.path == '/forgot-password';
+        final isOnboarding = state.uri.path == '/onboarding';
 
         // If not logged in and not on auth routes or splash
         if (!isLoggedIn && !isAuthRoute && !isSplash && !isOnboarding) {
