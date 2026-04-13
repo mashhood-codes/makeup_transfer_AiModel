@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/colors.dart';
+import 'package:go_router/go_router.dart';
+import '../../core/theme/colors.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -12,8 +13,16 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
+    print('🎬 SplashScreen loaded - waiting 3 seconds...');
     Future.delayed(const Duration(seconds: 3), () {
-      if (mounted) Navigator.of(context).pushReplacementNamed('/login');
+      print('⏱️ 3 seconds passed - attempting navigation to /login');
+      if (mounted) {
+        print('📍 Context ready - calling context.go("/login")');
+        context.go('/login');
+        print('✅ Navigation called');
+      } else {
+        print('❌ Widget not mounted - skipping navigation');
+      }
     });
   }
 

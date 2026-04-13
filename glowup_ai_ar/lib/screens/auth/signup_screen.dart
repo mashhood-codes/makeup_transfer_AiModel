@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/colors.dart';
-import '../../../services/secure_auth_service.dart';
+import 'package:go_router/go_router.dart';
+import '../../core/theme/colors.dart';
+import '../../services/secure_auth_service.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -34,7 +35,7 @@ class _SignupScreenState extends State<SignupScreen> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error)));
     } else {
       await SecureAuthService.login(email, password);
-      if (mounted) Navigator.of(context).pushReplacementNamed('/home');
+      if (mounted) context.go('/home');
     }
   }
 
@@ -44,7 +45,7 @@ class _SignupScreenState extends State<SignupScreen> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => context.pop(),
         ),
       ),
       body: SafeArea(

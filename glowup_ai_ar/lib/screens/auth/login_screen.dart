@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/colors.dart';
-import '../../../services/secure_auth_service.dart';
+import 'package:go_router/go_router.dart';
+import '../../core/theme/colors.dart';
+import '../../services/secure_auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -13,6 +14,12 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    print('📝 LoginScreen loaded');
+  }
 
   Future<void> _handleLogin() async {
     final email = _emailController.text.trim();
@@ -32,7 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (error != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error)));
     } else {
-      Navigator.of(context).pushReplacementNamed('/home');
+      context.go('/home');
     }
   }
 
@@ -81,7 +88,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
               const SizedBox(height: 16),
               TextButton(
-                onPressed: () => Navigator.of(context).pushNamed('/signup'),
+                onPressed: () => context.go('/signup'),
                 child: const Text('Don\'t have an account? Sign Up'),
               ),
             ],

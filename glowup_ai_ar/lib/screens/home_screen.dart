@@ -295,15 +295,15 @@ class _HomeScreenState extends State<HomeScreen> {
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   const SizedBox(height: 24),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  Wrap(
+                    spacing: 16,
+                    alignment: WrapAlignment.center,
                     children: [
                       _buildImageSourceButton(
                         icon: Icons.camera_alt,
                         label: 'Camera',
                         onTap: () => _pickImage(ImageSource.camera),
                       ),
-                      const SizedBox(width: 16),
                       _buildImageSourceButton(
                         icon: Icons.photo_library,
                         label: 'Gallery',

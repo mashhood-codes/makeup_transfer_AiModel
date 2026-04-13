@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../widgets/custom_button.dart';
 import '../routes/app_routes.dart';
 
@@ -19,7 +20,7 @@ class ProfileScreen extends StatelessWidget {
             const Text('user@example.com', style: TextStyle(color: Colors.grey)),
             const SizedBox(height: 30),
             CustomButton(text: 'Logout', onPressed: () {
-              Navigator.pushReplacementNamed(context, AppRoutes.login);
+              context.go(AppRoutes.login);
             }, isOutline: true),
           ],
         ),

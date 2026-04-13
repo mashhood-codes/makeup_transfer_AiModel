@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../routes/app_routes.dart';
 import '../widgets/custom_button.dart';
 
@@ -36,7 +37,7 @@ class OnboardingScreen extends StatelessWidget {
               child: CustomButton(
                 text: 'Get Started',
                 onPressed: () {
-                  Navigator.pushReplacementNamed(context, AppRoutes.signup);
+                  context.go(AppRoutes.signup);
                 },
               ),
             ),

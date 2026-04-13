@@ -23,6 +23,9 @@ import 'screens/booking_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Clear any stale sessions on app start (for fresh login flow)
+  print('🔄 Clearing stale session...');
+  await SecureAuthService.logout();
   await ApiConfig.initialize();
   runApp(const ProviderScope(child: GlowupAIApp()));
 }
@@ -117,16 +120,21 @@ class GlowupAIApp extends ConsumerWidget {
             state.uri.path == '/forgot-password';
         final isOnboarding = state.uri.path == '/onboarding';
 
+        print('🔀 REDIRECT: path=${state.uri.path}, loggedIn=$isLoggedIn, isSplash=$isSplash, isAuth=$isAuthRoute, isOnboarding=$isOnboarding');
+
         // If not logged in and not on auth routes or splash
         if (!isLoggedIn && !isAuthRoute && !isSplash && !isOnboarding) {
+          print('🔀 → Redirecting to /splash (not logged in)');
           return '/splash';
         }
 
         // If logged in and on auth routes, go to home
         if (isLoggedIn && isAuthRoute) {
+          print('🔀 → Redirecting to /home (already logged in)');
           return '/home';
         }
 
+        print('🔀 → Allowing navigation (no redirect needed)');
         return null;
       },
     );
